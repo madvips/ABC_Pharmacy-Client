@@ -1,0 +1,49 @@
+<div class="app-container">
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo-section">
+        <mat-icon class="logo">local_pharmacy</mat-icon>
+        <h1>{{ title }}</h1>
+      </div>
+      
+      <nav class="nav-menu">
+        <button
+          mat-button
+          routerLink="/sales"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact: true}">
+          <mat-icon>receipt_long</mat-icon>
+          <span>Sales</span>
+        </button>
+        <button
+          mat-button
+          routerLink="/medicines"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact: true}">
+          <mat-icon>list</mat-icon>
+          <span>Medicines</span>
+        </button>
+        <button
+          mat-raised-button
+          color="accent"
+          routerLink="/sales/add"
+          class="add-btn">
+          <mat-icon>add</mat-icon>
+          <span>Record Sale</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+  
+  <!-- Main Content Area -->
+  <main class="app-content">
+    <router-outlet></router-outlet>
+  </main>
+  
+  <!-- Footer -->
+  <footer class="app-footer">
+    <p>&copy; {{ currentYear }} ABC Pharmacy. All rights reserved.</p>
+    <p class="footer-note">Built with Angular 16 & .NET 8</p>
+  </footer>
+</div>

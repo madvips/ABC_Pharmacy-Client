@@ -1,0 +1,149 @@
+<div class="medicine-list-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Medicine Inventory</mat-card-title>
+      <mat-card-subtitle>
+        Total: {{medicineService.totalMedicines()}} | 
+        Showing: {{medicineService.filteredCount()}}
+        <span *ngIf="medicineService.hasExpiringMedicines()" class="warning-badge expiring">
+          <mat-icon>warning</mat-icon>
+          {{medicineService.expiringCount()}} Expiring
+        </span>
+        <span *ngIf="medicineService.hasLowStockMedicines()" class="warning-badge low-stock">
+          <mat-icon>inventory_2</mat-icon>
+          {{medicineService.lowStockCount()}} Low Stock
+        </span>
+      </mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <!-- Search Bar -->
+      <div class="search-container">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search Medicines</mat-label>
+          <input 
+            matInput 
+            [value]="medicineService.searchTerm()"
+            (input)="onSearchChange($any($event.target).value)"
+            placeholder="Search by name or brand">
+          <mat-icon matSuffix>search</mat-icon>
+          <button 
+            *ngIf="medicineService.searchTerm()"
+            matSuffix 
+            mat-icon-button 
+            (click)="clearSearch()"
+            matTooltip="Clear search">
+            <mat-icon>clear</mat-icon>
+          </button>
+        </mat-form-field>
+        
+        <button 
+          mat-raised-button 
+          color="primary" 
+          routerLink="/medicines/add"
+          class="add-button">
+          <mat-icon>add</mat-icon>
+          Add Medicine
+        </button>
+        
+        <button 
+          mat-icon-button 
+          (click)="refresh()"
+          [disabled]="medicineService.isLoading()"
+          matTooltip="Refresh">
+          <mat-icon [class.spinning]="medicineService.isLoading()">refresh</mat-icon>
+        </button>
+      </div>
+
+      <!-- Legend -->
+      <div class="legend">
+        <div class="legend-item">
+          <span class="legend-color expiring"></span>
+          <span>Expiring within 30 days ({{medicineService.expiringCount()}})</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color low-stock"></span>
+          <span>Low stock - less than 10 ({{medicineService.lowStockCount()}})</span>
+        </div>
+      </div>
+
+      <!-- Loading Spinner -->
+      <div *ngIf="medicineService.isLoading()" class="loading-container">
+        <mat-spinner></mat-spinner>
+        <p>Loading medicines...</p>
+      </div>
+
+      <!-- Medicine Table -->
+      <div *ngIf="!medicineService.isLoading()" class="table-container">
+        <table mat-table [dataSource]="medicineService.filteredMedicines()" class="medicine-table">
+          
+          <!-- Full Name Column -->
+          <ng-container matColumnDef="fullName">
+            <th mat-header-cell *matHeaderCellDef>Medicine Name</th>
+            <td mat-cell *matCellDef="let medicine">{{medicine.fullName}}</td>
+          </ng-container>
+
+          <!-- Brand Column -->
+          <ng-container matColumnDef="brand">
+            <th mat-header-cell *matHeaderCellDef>Brand</th>
+            <td mat-cell *matCellDef="let medicine">{{medicine.brand}}</td>
+          </ng-container>
+
+          <!-- Expiry Date Column -->
+          <ng-container matColumnDef="expiryDate">
+            <th mat-header-cell *matHeaderCellDef>Expiry Date</th>
+            <td mat-cell *matCellDef="let medicine">
+              {{medicine.expiryDate | date:'mediumDate'}}
+              <span class="days-info" [class.warning]="medicineService.getDaysUntilExpiry(medicine.expiryDate) < 30">
+                ({{medicineService.getDaysUntilExpiry(medicine.expiryDate)}} days)
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Quantity Column -->
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef>Quantity</th>
+            <td mat-cell *matCellDef="let medicine">
+              {{medicine.quantity}}
+              <mat-icon *ngIf="medicine.quantity < 10" class="warning-icon" matTooltip="Low stock">
+                warning
+              </mat-icon>
+            </td>
+          </ng-container>
+
+          <!-- Price Column -->
+          <ng-container matColumnDef="price">
+            <th mat-header-cell *matHeaderCellDef>Price</th>
+            <td mat-cell *matCellDef="let medicine">{{medicine.price | currency:'INR':'symbol':'1.2-2'}}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr 
+            mat-row 
+            *matRowDef="let row; columns: displayedColumns"
+            [ngClass]="getRowClass(row)">
+          </tr>
+        </table>
+
+        <!-- No Data Message -->
+        <div *ngIf="medicineService.filteredMedicines().length === 0" class="no-data">
+          <mat-icon>inventory_2</mat-icon>
+          <p *ngIf="medicineService.searchTerm()">
+            No medicines found for "{{medicineService.searchTerm()}}"
+          </p>
+          <p *ngIf="!medicineService.searchTerm()">
+            No medicines in inventory. Click "Add Medicine" to get started.
+          </p>
+          <button 
+            *ngIf="!medicineService.searchTerm()"
+            mat-raised-button 
+            color="primary" 
+            routerLink="/medicines/add">
+            <mat-icon>add</mat-icon>
+            Add Your First Medicine
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

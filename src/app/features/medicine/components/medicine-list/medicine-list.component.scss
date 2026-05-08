@@ -1,0 +1,269 @@
+.medicine-list-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  mat-card {
+    mat-card-header {
+      margin-bottom: 20px;
+
+      mat-card-subtitle {
+        margin-top: 8px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+
+        .warning-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 4px 12px;
+          border-radius: 16px;
+          font-size: 12px;
+          font-weight: 600;
+          margin-left: 8px;
+
+          mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+          }
+
+          &.expiring {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef5350;
+          }
+
+          &.low-stock {
+            background-color: #fff9c4;
+            color: #f57f17;
+            border: 1px solid #fbc02d;
+          }
+        }
+      }
+    }
+  }
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+
+  .search-field {
+    flex: 1;
+    min-width: 250px;
+    max-width: 400px;
+  }
+
+  .add-button {
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+.legend {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 16px;
+  padding: 12px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  flex-wrap: wrap;
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+
+    .legend-color {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      flex-shrink: 0;
+
+      &.expiring {
+        background-color: #ffebee;
+        border: 2px solid #f44336;
+      }
+
+      &.low-stock {
+        background-color: #fff9c4;
+        border: 2px solid #fbc02d;
+      }
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  gap: 16px;
+
+  p {
+    color: #666;
+    font-size: 14px;
+    margin: 0;
+  }
+}
+
+.table-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.medicine-table {
+  width: 100%;
+
+  th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 16px;
+  }
+
+  td {
+    font-size: 14px;
+    padding: 12px 16px;
+
+    .warning-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      margin-left: 4px;
+      color: #ff9800;
+      cursor: help;
+    }
+  }
+
+  .days-info {
+    font-size: 12px;
+    color: #666;
+    margin-left: 4px;
+    display: inline-block;
+
+    &.warning {
+      color: #d32f2f;
+      font-weight: 600;
+    }
+  }
+
+  // Row status colors with smooth transitions
+  tr {
+    transition: background-color 0.2s ease;
+  }
+
+  tr.row-expiring {
+    background-color: #ffebee !important;
+    
+    &:hover {
+      background-color: #ffcdd2 !important;
+    }
+  }
+
+  tr.row-low-stock {
+    background-color: #fff9c4 !important;
+    
+    &:hover {
+      background-color: #fff59d !important;
+    }
+  }
+
+  tr.row-normal {
+    &:hover {
+      background-color: #f5f5f5;
+    }
+  }
+}
+
+.no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #999;
+  text-align: center;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  p {
+    font-size: 16px;
+    margin: 0 0 16px;
+  }
+
+  button {
+    margin-top: 8px;
+    
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
+    }
+  }
+}
+
+// Spinning animation for refresh icon
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .medicine-list-container {
+    padding: 12px;
+  }
+
+  .search-container {
+    flex-direction: column;
+    align-items: stretch;
+
+    .search-field {
+      max-width: 100%;
+    }
+
+    .add-button {
+      width: 100%;
+    }
+  }
+
+  .legend {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .medicine-table {
+    th, td {
+      padding: 8px;
+      font-size: 12px;
+    }
+  }
+}

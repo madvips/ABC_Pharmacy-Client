@@ -1,0 +1,158 @@
+.medicine-add-container {
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+
+  mat-card {
+    mat-card-header {
+      margin-bottom: 24px;
+
+      mat-card-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 24px;
+
+        mat-icon {
+          font-size: 28px;
+          width: 28px;
+          height: 28px;
+          color: #667eea;
+        }
+      }
+
+      mat-card-subtitle {
+        margin-top: 8px;
+        font-size: 14px;
+        color: #666;
+      }
+    }
+  }
+}
+
+form {
+  .form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+
+    .full-width {
+      width: 100%;
+    }
+
+    .half-width {
+      flex: 1;
+    }
+  }
+
+  mat-form-field {
+    font-size: 14px;
+
+    mat-icon[matPrefix] {
+      margin-right: 8px;
+      color: #666;
+    }
+
+    // Custom styling for valid fields
+    &.ng-valid.ng-dirty .mat-form-field-outline {
+      border-color: #4caf50;
+    }
+  }
+
+  .form-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background-color: #e8f5e9;
+    border-left: 4px solid #4caf50;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #2e7d32;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #e0e0e0;
+
+    button {
+      min-width: 120px;
+
+      mat-icon {
+        margin-right: 8px;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+
+      mat-spinner {
+        display: inline-block;
+        margin-right: 8px;
+      }
+
+      &[type="submit"] {
+        mat-icon, mat-spinner {
+          vertical-align: middle;
+        }
+      }
+    }
+  }
+}
+
+// Animation for form validation
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-5px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(5px);
+  }
+}
+
+.mat-form-field.ng-invalid.ng-touched {
+  animation: shake 0.5s;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .medicine-add-container {
+    padding: 12px;
+  }
+
+  .form-row {
+    flex-direction: column;
+
+    .half-width {
+      width: 100%;
+    }
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+// Print styles
+@media print {
+  .form-actions {
+    display: none;
+  }
+}

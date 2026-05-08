@@ -1,0 +1,166 @@
+<div class="sale-add-container">
+  <div class="header">
+    <h2>Record New Sale</h2>
+    <button mat-button (click)="cancel()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Sales
+    </button>
+  </div>
+
+  <form [formGroup]="saleForm" (ngSubmit)="onSubmit()" class="sale-form">
+
+    <!-- Customer Information -->
+    <mat-card class="form-section">
+      <mat-card-header>
+        <mat-card-title>Customer Information</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Customer Name (Optional)</mat-label>
+            <input matInput formControlName="customerName" placeholder="Enter customer name">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Phone Number (Optional)</mat-label>
+            <input matInput formControlName="customerPhone" placeholder="Enter phone number">
+            <mat-error *ngIf="saleForm.get('customerPhone')?.invalid && saleForm.get('customerPhone')?.touched">
+              Please enter a valid phone number
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Sale Items -->
+    <mat-card class="form-section">
+      <mat-card-header>
+        <mat-card-title>Sale Items</mat-card-title>
+        <div class="card-actions">
+          <button mat-raised-button color="primary" type="button" (click)="addItem()">
+            <mat-icon>add</mat-icon>
+            Add Item
+          </button>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+
+        <!-- Items List -->
+        <div formArrayName="items">
+          <div *ngFor="let item of items.controls; let i = index" [formGroupName]="i" class="item-row">
+
+            <mat-form-field appearance="outline" class="medicine-field">
+              <mat-label>Medicine</mat-label>
+              <mat-select formControlName="selectedMedicine">
+                <mat-option *ngFor="let medicine of getAvailableMedicines()" [value]="medicine.id">
+                  {{ medicine.fullName }} ({{ medicine.brand }}) - {{ medicine.quantity }} in stock
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="item.get('selectedMedicine')?.invalid && item.get('selectedMedicine')?.touched">
+                Please select a medicine
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="quantity-field">
+              <mat-label>Quantity</mat-label>
+              <input matInput type="number" formControlName="quantity" min="1">
+              <mat-error *ngIf="item.get('quantity')?.invalid && item.get('quantity')?.touched">
+                Quantity must be at least 1
+              </mat-error>
+              <mat-error *ngIf="!validateStock(item)">
+                Insufficient stock available
+              </mat-error>
+              <mat-hint *ngIf="getStockError(item)" class="stock-error">
+                {{ getStockError(item) }}
+              </mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="price-field">
+              <mat-label>Unit Price (₹)</mat-label>
+              <input matInput type="number" formControlName="unitPrice" min="0" step="0.01">
+              <span matSuffix>₹</span>
+              <mat-error *ngIf="item.get('unitPrice')?.invalid && item.get('unitPrice')?.touched">
+                Price must be 0 or greater
+              </mat-error>
+            </mat-form-field>
+
+            <div class="item-total">
+              <span class="total-label">Total:</span>
+              <span class="total-amount">₹{{ calculateItemTotal(item) | number:'1.2-2' }}</span>
+            </div>
+
+            <button mat-icon-button color="warn" type="button" (click)="removeItem(i)" class="remove-btn">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- No items message -->
+        <div *ngIf="items.length === 0" class="no-items">
+          <mat-icon class="no-items-icon">shopping_cart</mat-icon>
+          <p>No items added yet. Click "Add Item" to start.</p>
+        </div>
+
+        <!-- Items validation error -->
+        <mat-error *ngIf="items.invalid && items.touched" class="form-error">
+          Please add at least one item to the sale
+        </mat-error>
+
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Sale Summary -->
+    <mat-card class="form-section" *ngIf="items.length > 0">
+      <mat-card-header>
+        <mat-card-title>Sale Summary</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="summary-row">
+          <span class="summary-label">Total Items:</span>
+          <span class="summary-value">{{ items.controls.length }}</span>
+        </div>
+        <div class="summary-row total-row">
+          <span class="summary-label">Total Amount:</span>
+          <span class="summary-value">₹{{ getTotalAmount() | number:'1.2-2' }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Payment and Notes -->
+    <mat-card class="form-section">
+      <mat-card-header>
+        <mat-card-title>Payment & Notes</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Payment Method</mat-label>
+            <mat-select formControlName="paymentMethod">
+              <mat-option *ngFor="let method of paymentMethods" [value]="method.value">
+                {{ method.label }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="saleForm.get('paymentMethod')?.invalid && saleForm.get('paymentMethod')?.touched">
+              Please select a payment method
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="notes-field">
+          <mat-label>Notes (Optional)</mat-label>
+          <textarea matInput formControlName="notes" rows="3" placeholder="Any additional notes about this sale"></textarea>
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button mat-button type="button" (click)="cancel()">Cancel</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="isSubmitting()">
+        <mat-icon *ngIf="isSubmitting()">hourglass_empty</mat-icon>
+        <mat-icon *ngIf="!isSubmitting()">save</mat-icon>
+        {{ isSubmitting() ? 'Recording Sale...' : 'Record Sale' }}
+      </button>
+    </div>
+
+  </form>
+</div>
